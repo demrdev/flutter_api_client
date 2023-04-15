@@ -32,8 +32,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String? _result;
 
-  
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-  
+
   void _fetchData() async {
     changeLoading();
     try {
@@ -81,8 +79,8 @@ class _MyHomePageState extends State<MyHomePage> {
     changeLoading();
   }
 
-  void changeLoading(){
-    setState((){
+  void changeLoading() {
+    setState(() {
       isLoading = !isLoading;
     });
   }
