@@ -28,21 +28,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final MyApiClient apiClient = MyApiClient(baseUrl: 'https://jsonplaceholder.typicode.com/');
+  bool isLoading = false;
 
   String? _result;
 
-  void _fetchData() async {
-    try {
-      final data = await apiClient.fetchData('todos/1');
-      setState(() {
-        _result = data.toString();
-      });
-    } catch (e) {
-      setState(() {
-        _result = 'Error: $e';
-      });
-    }
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -74,5 +64,26 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.refresh),
       ),
     );
+  }
+  
+  void _fetchData() async {
+    changeLoading();
+    try {
+      final data = await apiClient.fetchData('todos/1');
+      setState(() {
+        _result = data.toString();
+      });
+    } catch (e) {
+      setState(() {
+        _result = 'Error: $e';
+      });
+    }
+    changeLoading();
+  }
+
+  void changeLoading(){
+    setState((){
+      isLoading = !isLoading;
+    });
   }
 }
