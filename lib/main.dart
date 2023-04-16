@@ -70,8 +70,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           itemBuilder: (BuildContext context, int index) {
                             var todo = _todos![index];
                             return Card(
-                              elevation: 4,
-                              margin: EdgeInsets.all(8),
+                              elevation: 5,
+                              margin: const EdgeInsets.all(8),
                               child: ListTile(
                                 title: Text(todo['title']),
                                 subtitle: Text('Completed: ${todo['completed']}'),
