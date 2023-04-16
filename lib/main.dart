@@ -76,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           },
                         ),
                       )
-                : CircularProgressIndicator(),
+                : const CircularProgressIndicator(),
           ],
         ),
       ),
