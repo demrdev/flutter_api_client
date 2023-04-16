@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'base_api_client.dart';
-import 'my_api_client.dart';
+import 'package:dio/dio.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,59 +13,44 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final MyApiClient apiClient = MyApiClient(baseUrl: 'https://jsonplaceholder.typicode.com/');
-  String? _result;
-  bool isLoading = true;
+  final Dio _dio = Dio(BaseOptions(baseUrl: 'https://jsonplaceholder.typicode.com/'));
+  List<dynamic>? _todos;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchData();
+    _fetchTodos();
   }
 
-  void changeLoading() {
-    setState(() {
-      isLoading = !isLoading;
-    });
+  void _fetchTodos() async {
+    try {
+      final response = await _dio.get('todos');
+      setState(() {
+        _todos = response.data;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error: $e');
+    }
   }
-
-  void _fetchData() async {
-  changeLoading();
-  try {
-    final response = await apiClient.dio.get('todos');
-    print('Status Code: ${response.statusCode}');
-    print('Response Data: ${response.data}');
-    setState(() {
-      _result = response.data.toString();
-    });
-  } catch (e) {
-    print('Error: $e');
-    setState(() {
-      _result = 'Error: $e';
-    });
-  } finally {
-    changeLoading();
-  }
-}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flutter API Client Example'),
+        title: Text('Flutter API Client Example'),
       ),
       body: Center(
         child: Column(
@@ -74,81 +58,28 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Text(
               'API Result:',
-              style: Theme.of(context).textTheme.titleLarge,
+              style: Theme.of(context).textTheme.headline6,
             ),
-            const SizedBox(height: 10),
-            !isLoading
-                ? SingleChildScrollView(
-                    child: Text(
-                      _result!,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  )
-                : const CircularProgressIndicator(),
+            SizedBox(height: 10),
+            !_isLoading
+                ? _todos == null
+                    ? Text('No data')
+                    : Expanded(
+                        child: ListView.builder(
+                          itemCount: _todos!.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            var todo = _todos![index];
+                            return ListTile(
+                              title: Text(todo['title']),
+                              subtitle: Text('Completed: ${todo['completed']}'),
+                            );
+                          },
+                        ),
+                      )
+                : CircularProgressIndicator(),
           ],
         ),
       ),
     );
   }
 }
-
-
-// class _MyHomePageState extends State<MyHomePage> {
-//   final MyApiClient apiClient = MyApiClient(baseUrl: 'https://jsonplaceholder.typicode.com/');
-//   bool isLoading = false;
-
-//   String? _result;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Flutter API Client Example'),
-//       ),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: <Widget>[
-//             Text(
-//               'API Result:',
-//               style: Theme.of(context).textTheme.headline6,
-//             ),
-//             const SizedBox(height: 10),
-//             _result != null
-//                 ? Text(
-//                     _result!,
-//                     style: const TextStyle(fontSize: 16),
-//                   )
-//                 : const CircularProgressIndicator(),
-//           ],
-//         ),
-//       ),
-//       floatingActionButton: FloatingActionButton(
-//         onPressed: _fetchData,
-//         tooltip: 'Fetch Data',
-//         child: const Icon(Icons.refresh),
-//       ),
-//     );
-//   }
-
-//   void _fetchData() async {
-//     changeLoading();
-//     try {
-//       final data = await apiClient.fetchData('todos/1');
-//       setState(() {
-//         _result = data.toString();
-//       });
-//     } catch (e) {
-//       setState(() {
-//         _result = 'Error: $e';
-//       });
-//     }
-//     changeLoading();
-//   }
-
-//   void changeLoading() {
-//     setState(() {
-//       isLoading = !isLoading;
-//     });
-//   }
-// }
