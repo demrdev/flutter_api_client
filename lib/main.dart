@@ -28,9 +28,35 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final MyApiClient apiClient = MyApiClient(baseUrl: 'https://jsonplaceholder.typicode.com/');
-  bool isLoading = false;
-
   String? _result;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  void changeLoading() {
+    setState(() {
+      isLoading = !isLoading;
+    });
+  }
+
+  void _fetchData() async {
+    changeLoading();
+    try {
+      final data = await apiClient.fetchData('todos');
+      setState(() {
+        _result = data.toString();
+      });
+    } catch (e) {
+      setState(() {
+        _result = 'Error: $e';
+      });
+    }
+    changeLoading();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,44 +70,81 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Text(
               'API Result:',
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 10),
-            _result != null
-                ? Text(
-                    _result!,
-                    style: const TextStyle(fontSize: 16),
+            !isLoading
+                ? SingleChildScrollView(
+                    child: Text(
+                      _result!,
+                      style: const TextStyle(fontSize: 16),
+                    ),
                   )
                 : const CircularProgressIndicator(),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _fetchData,
-        tooltip: 'Fetch Data',
-        child: const Icon(Icons.refresh),
-      ),
     );
   }
-
-  void _fetchData() async {
-    changeLoading();
-    try {
-      final data = await apiClient.fetchData('todos/1');
-      setState(() {
-        _result = data.toString();
-      });
-    } catch (e) {
-      setState(() {
-        _result = 'Error: $e';
-      });
-    }
-    changeLoading();
-  }
-
-  void changeLoading() {
-    setState(() {
-      isLoading = !isLoading;
-    });
-  }
 }
+
+
+// class _MyHomePageState extends State<MyHomePage> {
+//   final MyApiClient apiClient = MyApiClient(baseUrl: 'https://jsonplaceholder.typicode.com/');
+//   bool isLoading = false;
+
+//   String? _result;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Flutter API Client Example'),
+//       ),
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             Text(
+//               'API Result:',
+//               style: Theme.of(context).textTheme.headline6,
+//             ),
+//             const SizedBox(height: 10),
+//             _result != null
+//                 ? Text(
+//                     _result!,
+//                     style: const TextStyle(fontSize: 16),
+//                   )
+//                 : const CircularProgressIndicator(),
+//           ],
+//         ),
+//       ),
+//       floatingActionButton: FloatingActionButton(
+//         onPressed: _fetchData,
+//         tooltip: 'Fetch Data',
+//         child: const Icon(Icons.refresh),
+//       ),
+//     );
+//   }
+
+//   void _fetchData() async {
+//     changeLoading();
+//     try {
+//       final data = await apiClient.fetchData('todos/1');
+//       setState(() {
+//         _result = data.toString();
+//       });
+//     } catch (e) {
+//       setState(() {
+//         _result = 'Error: $e';
+//       });
+//     }
+//     changeLoading();
+//   }
+
+//   void changeLoading() {
+//     setState(() {
+//       isLoading = !isLoading;
+//     });
+//   }
+// }
