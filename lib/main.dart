@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter API Client Example'),
+        title: const Text('Flutter API Client Example'),
       ),
       body: Center(
         child: Column(
@@ -60,10 +60,10 @@ class _MyHomePageState extends State<MyHomePage> {
               'API Result:',
               style: Theme.of(context).textTheme.headline6,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             !_isLoading
                 ? _todos == null
-                    ? Text('No data')
+                    ? const Text('No data')
                     : Expanded(
                         child: ListView.builder(
                           itemCount: _todos!.length,
