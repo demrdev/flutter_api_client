@@ -1,38 +1,50 @@
-import 'package:flutter/material.dart';
 
-import 'main.dart';
-import 'my_api_client.dart';
+import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter API Client Example',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
 
 class _MyHomePageState extends State<MyHomePage> {
-  final MyApiClient apiClient = MyApiClient(baseUrl: 'https://jsonplaceholder.typicode.com/');
-  String? _result;
-  bool isLoading = true;
+  Dio _dio = Dio(BaseOptions(baseUrl: 'https://jsonplaceholder.typicode.com/'));
+  List<dynamic>? _todos;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchData();
+    _fetchTodos();
   }
 
-  void changeLoading() {
-    setState(() {
-      isLoading = !isLoading;
-    });
-  }
-
-  void _fetchData() async {
-    changeLoading();
+  void _fetchTodos() async {
     try {
-      final data = await apiClient.fetchData('todos');
+      final response = await _dio.get('todos');
       setState(() {
-        _result = data.toString();
+        _todos = response.data;
+        _isLoading = false;
       });
     } catch (e) {
-      setState(() {
-        _result = 'Error: $e';
-      });
+      print('Error: $e');
     }
-    changeLoading();
   }
 
   @override
@@ -41,26 +53,20 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text('Flutter API Client Example'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'API Result:',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            SizedBox(height: 10),
-            !isLoading
-                ? SingleChildScrollView(
-                    child: Text(
-                      _result!,
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  )
-                : CircularProgressIndicator(),
-          ],
-        ),
-      ),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : _todos == null
+              ? Center(child: Text('No data'))
+              : ListView.builder(
+                  itemCount: _todos!.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    var todo = _todos![index];
+                    return ListTile(
+                      title: Text(todo['title']),
+                      subtitle: Text('Completed: ${todo['completed']}'),
+                    );
+                  },
+                ),
     );
   }
 }
