@@ -44,19 +44,23 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _fetchData() async {
-    changeLoading();
-    try {
-      final data = await apiClient.fetchData('todos');
-      setState(() {
-        _result = data.toString();
-      });
-    } catch (e) {
-      setState(() {
-        _result = 'Error: $e';
-      });
-    }
+  changeLoading();
+  try {
+    final response = await apiClient.dio.get('todos');
+    print('Status Code: ${response.statusCode}');
+    print('Response Data: ${response.data}');
+    setState(() {
+      _result = response.data.toString();
+    });
+  } catch (e) {
+    print('Error: $e');
+    setState(() {
+      _result = 'Error: $e';
+    });
+  } finally {
     changeLoading();
   }
+}
 
   @override
   Widget build(BuildContext context) {
