@@ -32,7 +32,7 @@ class _HomeViewState extends State<HomeView> {
               values.apiResult,
               style: Theme.of(context).textTheme.headline6,
             ),
-            const SizedBox(height: 10),
+             const SizedBox(height: 10),
             !todoFetcher.isLoading
                 ? todoFetcher.todos == null
                     ? Text(values.noData)
