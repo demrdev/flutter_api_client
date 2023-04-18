@@ -52,11 +52,11 @@ class _HomeViewState extends State<HomeView> {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: Text('Todo Details'),
+                                      title: const Text('Todo Details'),
                                       content: Text('Title: ${todo['title']}\nCompleted: ${todo['completed']}'),
                                       actions: <Widget>[
                                         TextButton(
-                                          child: Text('OK'),
+                                          child: const Text('OK'),
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           },
