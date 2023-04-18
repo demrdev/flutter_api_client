@@ -26,7 +26,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final Dio _dio = Dio(BaseOptions(baseUrl: 'https://jsonplaceholder.typicode.com/'));
   List<dynamic>? _todos;
-  bool _isLoading = true;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -35,16 +35,23 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   
 
-  void _fetchTodos() async {
+    void _fetchTodos() async {
     try {
       final response = await _dio.get('todos');
       setState(() {
         _todos = response.data;
-        _isLoading = false;
+        changeLoading();
       });
     } catch (e) {
       print('Error: $e');
     }
+    changeLoading();
+  }
+
+  void changeLoading() {
+    setState(() {
+      _isLoading = !_isLoading;
+    });
   }
 
   @override
