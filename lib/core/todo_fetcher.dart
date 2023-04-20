@@ -1,21 +1,13 @@
 import 'dart:async';
-
 import 'dio_client.dart';
 
 class TodoFetcher {
-  static final TodoFetcher _instance = TodoFetcher._internal();
+  final DioClient _dioClient;
 
-  factory TodoFetcher() {
-    return _instance;
-  }
+  TodoFetcher(this._dioClient);
 
-  TodoFetcher._internal() {
-    _dioClient = DioClient.instance;
-  }
-
-  late DioClient _dioClient;
-  List<dynamic>? todos;
-  StreamController<bool> _isLoadingController = StreamController<bool>.broadcast();
+  late final List<dynamic>? todos;
+  final StreamController<bool> _isLoadingController = StreamController<bool>.broadcast();
 
   Stream<bool> get isLoadingStream => _isLoadingController.stream;
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_api_client/core/dio_client.dart';
 
 import '../constant/list_title.dart';
 import '../core/todo_fetcher.dart';
@@ -16,7 +17,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    _todoFetcher = TodoFetcher();
+    _todoFetcher = TodoFetcher(DioClient.instance);
   }
 
   @override
