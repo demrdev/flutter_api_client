@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 
+import '../constant/app_constant.dart';
+
 class DioClient {
   static DioClient? _instance;
 
@@ -8,9 +10,9 @@ class DioClient {
     return _instance!;
   }
 
-  late final Dio dio;
+  final Dio dio;
 
-  DioClient._init() : dio = Dio(BaseOptions(baseUrl: 'https://jsonplaceholder.typicode.com/'));
+  DioClient._init() : dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
 
   void dispose() {
     dio.close();
