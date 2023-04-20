@@ -10,48 +10,63 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  final TodoFetcher todoFetcher = TodoFetcher();
-  final HomeStringValues values = HomeStringValues();
+  late final TodoFetcher _todoFetcher;
+  final HomeStringValues _values = HomeStringValues();
 
   @override
   void initState() {
     super.initState();
-    todoFetcher.fetchTodos();
+    _todoFetcher = TodoFetcher();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _todoFetcher.fetchTodos();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(values.title),
+        title: Text(_values.title),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              values.apiResult,
+              _values.apiResult,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 10),
-            !todoFetcher.isLoading
-                ? todoFetcher.todos == null
-                    ? Text(values.noData)
-                    : Expanded(
-                        child: ListView.builder(
-                          itemCount: todoFetcher.todos!.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            var todo = todoFetcher.todos![index];
-                            return ListTitle(todo: todo);
-                          },
-                        ),
-                      )
-                : const CircularProgressIndicator(),
+            StreamBuilder<bool>(
+              stream: _todoFetcher.isLoadingStream,
+              initialData: false,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+                if (!snapshot.hasData || snapshot.data == true) {
+                  return const CircularProgressIndicator();
+                }
+                if (_todoFetcher.todos == null) {
+                  return Text(_values.noData);
+                }
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount: _todoFetcher.todos!.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      var todo = _todoFetcher.todos![index];
+                      return ListTitle(todo: todo);
+                    },
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
     );
   }
 }
-
-

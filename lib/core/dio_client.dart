@@ -1,7 +1,18 @@
 import 'package:dio/dio.dart';
 
 class DioClient {
-  final Dio dio;
+  static DioClient? _instance;
 
-  DioClient() : dio = Dio(BaseOptions(baseUrl: 'https://jsonplaceholder.typicode.com/'));
+  static DioClient get instance {
+    _instance ??= DioClient._init();
+    return _instance!;
+  }
+
+  late final Dio dio;
+
+  DioClient._init() : dio = Dio(BaseOptions(baseUrl: 'https://jsonplaceholder.typicode.com/'));
+
+  void dispose() {
+    dio.close();
+  }
 }
