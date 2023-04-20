@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-
 import '../constant/app_constant.dart';
 
 class DioClient {
@@ -10,7 +9,7 @@ class DioClient {
     return _instance!;
   }
 
-  final Dio dio;
+  late final Dio dio;
 
   DioClient._init() : dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
 
